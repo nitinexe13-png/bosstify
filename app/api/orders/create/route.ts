@@ -1,7 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
-import { addOrder } from "@/lib/niva";
-import { calculateCharge, isValidUrl, round4, toNumber } from "@/lib/utils";
+import { calculateChargeINR, formatINR, isValidUrl, round2, toNumber } from "@/lib/utils";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
@@ -43,6 +42,7 @@ export async function POST(request: Request) {
       .from("services_cache")
       .select("*")
       .eq("id", serviceId)
+      .eq("is_active", true)
       .maybeSingle();
 
     if (serviceError || !service) {
@@ -52,8 +52,8 @@ export async function POST(request: Request) {
       );
     }
 
-    const min = toNumber(service.min);
-    const max = toNumber(service.max);
+    const min = toNumber(service.min_qty) || toNumber(service.min) || 10;
+    const max = toNumber(service.max_qty) || toNumber(service.max) || 10000;
     if (quantity < min || quantity > max) {
       return NextResponse.json(
         {
@@ -63,8 +63,8 @@ export async function POST(request: Request) {
       );
     }
 
-    const rate = toNumber(service.rate);
-    const charge = calculateCharge(quantity, rate);
+    const pricePer1000 = toNumber(service.price_inr);
+    const charge = calculateChargeINR(quantity, pricePer1000);
     if (charge <= 0) {
       return NextResponse.json(
         { error: "Could not calculate the order charge." },
@@ -82,9 +82,9 @@ export async function POST(request: Request) {
     if (balance < charge) {
       return NextResponse.json(
         {
-          error: `Insufficient balance. This order costs $${charge.toFixed(
-            4
-          )} but your balance is $${balance.toFixed(4)}.`,
+          error: `Insufficient balance. This order costs ${formatINR(
+            charge
+          )} but your balance is ${formatINR(balance)}.`,
         },
         { status: 409 }
       );
@@ -95,7 +95,7 @@ export async function POST(request: Request) {
     // Atomically deduct the charge — fails if the balance changed.
     const { data: deducted, error: deductError } = await admin
       .from("profiles")
-      .update({ balance: round4(balance - charge) })
+      .update({ balance: round2(balance - charge) })
       .eq("id", user.id)
       .gte("balance", charge)
       .select("balance")
@@ -108,46 +108,33 @@ export async function POST(request: Request) {
       );
     }
 
-    // Place the order with NivaMiner. Refund on failure.
-    let nivaOrderId: number;
-    try {
-      nivaOrderId = await addOrder(serviceId, link, quantity);
-    } catch (err) {
-      await admin
-        .from("profiles")
-        .update({ balance: round4(toNumber(deducted.balance) + charge) })
-        .eq("id", user.id);
-
-      const message =
-        err instanceof Error ? err.message : "NivaMiner API error.";
-      return NextResponse.json(
-        { error: `Order could not be placed: ${message}` },
-        { status: 502 }
-      );
-    }
+    // Manual order — no external provider. Assigned for manual processing.
+    const nivaOrderId = `BST-${Date.now()}`;
 
     const { data: order, error: orderError } = await admin
       .from("orders")
       .insert({
         user_id: user.id,
-        niva_order_id: String(nivaOrderId),
+        niva_order_id: nivaOrderId,
         service_id: serviceId,
         service_name: service.name,
         link,
         quantity,
         charge,
+        charge_inr: charge,
+        status: "pending",
       })
       .select()
       .single();
 
     if (orderError || !order) {
-      // Order was placed at NivaMiner — refund the user.
+      // Order was not saved — refund the user.
       await admin
         .from("profiles")
-        .update({ balance: round4(toNumber(deducted.balance) + charge) })
+        .update({ balance: round2(toNumber(deducted.balance) + charge) })
         .eq("id", user.id);
       return NextResponse.json(
-        { error: "Order was placed but could not be saved. Refund issued. Contact support." },
+        { error: "Order could not be saved. Refund issued. Contact support." },
         { status: 500 }
       );
     }
