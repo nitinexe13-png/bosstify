@@ -1,7 +1,5 @@
 import { NewOrderForm } from "@/components/orders/NewOrderForm";
-import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
-import { refreshServicesCache } from "@/lib/niva";
 import { toNumber } from "@/lib/utils";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
@@ -62,9 +60,10 @@ export default async function NewOrderPage({
 
 async function fetchServices() {
   const supabase = createClient();
-  const { data: cached, error } = await supabase
+  const { data, error } = await supabase
     .from("services_cache")
     .select("*")
+    .eq("is_active", true)
     .order("category")
     .order("name");
 
@@ -72,31 +71,15 @@ async function fetchServices() {
     throw new Error(error.message);
   }
 
-  if (cached && cached.length > 0) {
-    return cached.map((s) => ({
-      ...s,
-      rate: toNumber(s.rate),
-      min: toNumber(s.min),
-      max: toNumber(s.max),
-      refill: Boolean(s.refill),
-      cancel: Boolean(s.cancel),
-    }));
-  }
-
-  // Seed the cache from NivaMiner if it is empty.
-  const seeded = await refreshServicesCache();
-  const admin = createAdminClient();
-  const { data: fresh } = await admin
-    .from("services_cache")
-    .select("*")
-    .order("category")
-    .order("name");
-
-  return (fresh ?? seeded).map((s) => ({
+  return (data ?? []).map((s) => ({
     ...s,
     rate: toNumber(s.rate),
     min: toNumber(s.min),
     max: toNumber(s.max),
+    price_inr: toNumber(s.price_inr),
+    min_qty: toNumber(s.min_qty),
+    max_qty: toNumber(s.max_qty),
+    is_active: Boolean(s.is_active),
     refill: Boolean(s.refill),
     cancel: Boolean(s.cancel),
   }));
