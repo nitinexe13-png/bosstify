@@ -35,6 +35,7 @@ export default async function AdminOrdersPage({
     link: order.link,
     quantity: toNumber(order.quantity),
     charge: toNumber(order.charge),
+    charge_inr: toNumber(order.charge_inr),
     status: order.status,
     start_count: toNumber(order.start_count),
     remains: toNumber(order.remains),
