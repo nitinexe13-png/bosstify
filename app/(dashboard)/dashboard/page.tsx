@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/Button";
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/Card";
 import { orderStatusBadge, Badge } from "@/components/ui/Badge";
 import { createClient } from "@/lib/supabase/server";
-import { formatCurrency, formatDate, toNumber } from "@/lib/utils";
+import { formatINR, formatDate, toNumber } from "@/lib/utils";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -46,7 +46,7 @@ export default async function DashboardPage() {
   const recentOrders = allOrders.slice(0, 5);
 
   const stats = [
-    { label: "Balance", value: `$${formatCurrency(balance)}` },
+    { label: "Balance", value: formatINR(balance) },
     { label: "Total Orders", value: String(totalOrders) },
     { label: "Pending", value: String(pendingOrders) },
     { label: "Completed", value: String(completedOrders) },
@@ -131,7 +131,7 @@ export default async function DashboardPage() {
                         {order.quantity}
                       </td>
                       <td className="hidden px-5 py-3 sm:table-cell">
-                        ${formatCurrency(toNumber(order.charge))}
+                        {formatINR(toNumber(order.charge_inr))}
                       </td>
                       <td className="px-5 py-3">
                         <Badge variant={orderStatusBadge(order.status)}>
