@@ -3,6 +3,7 @@
 import { supabaseClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 import type { UserProfile } from "@/types";
+import { motion } from "framer-motion";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -106,47 +107,60 @@ export function AdminSidebar({
 
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex w-60 flex-col bg-black text-white",
+          "fixed inset-y-0 left-0 z-50 flex w-[220px] flex-col border-r border-[#f0f0f0] bg-white",
           "transition-transform duration-200",
           open ? "translate-x-0" : "-translate-x-full",
           "lg:translate-x-0"
         )}
       >
-        <div className="flex h-16 items-center border-b border-white/10 px-5">
-          <Link href="/admin" className="text-xl font-bold tracking-tight">
+        <div className="flex h-16 items-center px-5">
+          <Link href="/admin" className="text-base font-bold tracking-tight text-black">
             Bosstify
           </Link>
         </div>
 
-        <div className="border-b border-white/10 px-5 py-4">
-          <p className="text-xs text-white/60">Signed in as Admin</p>
-          <p className="mt-1 truncate text-sm font-semibold">
-            {user.email ?? "Admin"}
-          </p>
+        <div className="mx-5 mb-4 flex items-center justify-between rounded-btn border border-[#f0f0f0] px-3 py-2">
+          <span className="text-xs text-muted">Signed in as</span>
+          <span className="max-w-[110px] truncate text-[13px] font-semibold text-black">
+            {user.username ?? "Admin"}
+          </span>
         </div>
 
-        <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={onClose}
-              className={cn(
-                "flex items-center gap-3 rounded-btn px-3 py-2.5 text-sm font-medium transition-colors",
-                isActive(item.href)
-                  ? "bg-white/10 text-white"
-                  : "text-white/70 hover:bg-white/5 hover:text-white"
-              )}
-            >
-              {item.icon}
-              {item.label}
-            </Link>
-          ))}
+        <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 pb-4">
+          <p className="px-3 pb-1.5 pt-1 text-[10px] font-semibold uppercase tracking-[1.5px] text-gray-300">
+            Admin
+          </p>
+          {navItems.map((item) => {
+            const active = isActive(item.href);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={onClose}
+                className={cn(
+                  "relative flex items-center gap-3 rounded-btn px-3 py-2.5 text-sm transition-colors duration-150",
+                  active
+                    ? "font-medium text-black"
+                    : "font-normal text-gray-500 hover:bg-gray-50 hover:text-black"
+                )}
+              >
+                {active && (
+                  <motion.span
+                    layoutId="admin-sidebar-active"
+                    className="absolute inset-y-0 left-0 w-[2px] bg-black"
+                    transition={{ duration: 0.25, ease: "easeOut" }}
+                  />
+                )}
+                {item.icon}
+                {item.label}
+              </Link>
+            );
+          })}
 
           <Link
             href="/dashboard"
             onClick={onClose}
-            className="mt-2 flex items-center gap-3 rounded-btn px-3 py-2.5 text-sm font-medium text-white/70 transition-colors hover:bg-white/5 hover:text-white"
+            className="mt-2 flex items-center gap-3 rounded-btn border-t border-[#f0f0f0] px-3 py-2.5 pt-3 text-sm font-normal text-gray-500 transition-colors duration-150 hover:bg-gray-50 hover:text-black"
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-5 w-5" aria-hidden>
               <path d="M15 21v-8h4v8M3 21V11h4v10M7 21h4v-6h2v6M9 3l12 8" strokeLinecap="round" strokeLinejoin="round" />
@@ -155,11 +169,11 @@ export function AdminSidebar({
           </Link>
         </nav>
 
-        <div className="border-t border-white/10 p-3">
+        <div className="border-t border-[#f0f0f0] p-3">
           <button
             onClick={handleLogout}
             disabled={loggingOut}
-            className="flex w-full items-center gap-3 rounded-btn px-3 py-2.5 text-sm font-medium text-white/70 transition-colors hover:bg-white/5 hover:text-white disabled:opacity-50"
+            className="flex w-full items-center gap-3 rounded-btn px-3 py-2.5 text-sm font-normal text-gray-400 transition-colors duration-150 hover:bg-gray-50 hover:text-black disabled:opacity-50"
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-5 w-5" aria-hidden>
               <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" strokeLinecap="round" />
