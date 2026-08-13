@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
-import { calculateCharge, cn, formatCurrency, isValidUrl } from "@/lib/utils";
+import { calculateChargeINR, cn, formatINR, isValidUrl } from "@/lib/utils";
 import type { Order, Service } from "@/types";
 import Link from "next/link";
 import { useMemo, useState } from "react";
@@ -42,7 +42,7 @@ export function NewOrderForm({
     () =>
       services
         .filter((s) => s.category === category)
-        .sort((a, b) => a.rate - b.rate),
+        .sort((a, b) => a.price_inr - b.price_inr),
     [services, category]
   );
 
@@ -54,7 +54,7 @@ export function NewOrderForm({
   const quantityNumber = Number(quantity);
   const price =
     selectedService && quantityNumber > 0
-      ? calculateCharge(quantityNumber, selectedService.rate)
+      ? calculateChargeINR(quantityNumber, selectedService.price_inr)
       : 0;
 
   function validateStep(current: number): string | null {
@@ -70,14 +70,14 @@ export function NewOrderForm({
       if (!selectedService) return "Please select a service.";
       if (!Number.isInteger(quantityNumber) || quantityNumber <= 0)
         return "Quantity must be a positive whole number.";
-      if (quantityNumber < selectedService.min)
-        return `Minimum quantity for this service is ${selectedService.min}.`;
-      if (quantityNumber > selectedService.max)
-        return `Maximum quantity for this service is ${selectedService.max}.`;
+      if (quantityNumber < selectedService.min_qty)
+        return `Minimum quantity for this service is ${selectedService.min_qty}.`;
+      if (quantityNumber > selectedService.max_qty)
+        return `Maximum quantity for this service is ${selectedService.max_qty}.`;
       if (price > balance)
-        return `Insufficient balance. This order costs $${formatCurrency(
+        return `Insufficient balance. This order costs ${formatINR(
           price
-        )} but your balance is $${formatCurrency(balance)}.`;
+        )} but your balance is ${formatINR(balance)}.`;
     }
     return null;
   }
@@ -148,9 +148,9 @@ export function NewOrderForm({
         <h2 className="mt-4 text-xl font-semibold">Order placed successfully</h2>
         <p className="mt-2 text-sm text-muted">
           Order <span className="font-semibold text-black">#{createdOrder.id}</span>{" "}
-          has been submitted to the service provider. Your balance was charged{" "}
+          has been submitted to our team for processing. Your balance was charged{" "}
           <span className="font-semibold text-black">
-            ${formatCurrency(createdOrder.charge)}
+            {formatINR(createdOrder.charge_inr)}
           </span>
           .
         </p>
@@ -242,16 +242,16 @@ export function NewOrderForm({
               <option value="">Choose a service…</option>
               {categoryServices.map((s) => (
                 <option key={s.id} value={s.id}>
-                  {s.name} — ${formatCurrency(s.rate)}/1k
+                  {s.name} — {formatINR(s.price_inr)}/1k
                 </option>
               ))}
             </select>
             {selectedService && (
               <div className="mt-4 grid grid-cols-3 gap-3 text-center">
                 {[
-                  { label: "Rate / 1k", value: `$${formatCurrency(selectedService.rate)}` },
-                  { label: "Min", value: selectedService.min },
-                  { label: "Max", value: selectedService.max },
+                  { label: "Price / 1k", value: formatINR(selectedService.price_inr) },
+                  { label: "Min", value: selectedService.min_qty },
+                  { label: "Max", value: selectedService.max_qty },
                 ].map((item) => (
                   <div key={item.label} className="rounded-btn border border-line bg-surface px-2 py-3">
                     <p className="text-xs text-muted">{item.label}</p>
@@ -279,22 +279,22 @@ export function NewOrderForm({
             <Input
               id="quantity"
               type="number"
-              min={selectedService?.min ?? 1}
-              max={selectedService?.max}
+              min={selectedService?.min_qty ?? 1}
+              max={selectedService?.max_qty}
               label="Quantity"
               placeholder="e.g. 1000"
               value={quantity}
               onChange={(e) => setQuantity(e.target.value)}
               hint={
                 selectedService
-                  ? `Min ${selectedService.min} — Max ${selectedService.max}`
+                  ? `Min ${selectedService.min_qty} — Max ${selectedService.max_qty}`
                   : undefined
               }
             />
             <div className="flex items-center justify-between rounded-btn border border-line bg-surface px-4 py-3">
               <span className="text-sm text-muted">Total cost</span>
               <span className="text-lg font-semibold">
-                ${formatCurrency(price)}
+                {formatINR(price)}
               </span>
             </div>
             <div className="flex items-center justify-between text-sm">
@@ -305,7 +305,7 @@ export function NewOrderForm({
                   price > balance ? "text-red-600" : "text-black"
                 )}
               >
-                ${formatCurrency(balance)}
+                {formatINR(balance)}
               </span>
             </div>
           </div>
