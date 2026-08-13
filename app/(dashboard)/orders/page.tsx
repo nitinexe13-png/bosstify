@@ -29,6 +29,7 @@ export default async function OrdersPage() {
   const normalized = (orders ?? []).map((o) => ({
     ...o,
     charge: toNumber(o.charge),
+    charge_inr: toNumber(o.charge_inr),
     quantity: toNumber(o.quantity),
     start_count: toNumber(o.start_count),
     remains: toNumber(o.remains),
@@ -38,7 +39,7 @@ export default async function OrdersPage() {
     <div>
       <h1 className="text-2xl font-semibold tracking-tight">Orders</h1>
       <p className="mt-1 text-sm text-muted">
-        Track and sync the status of all your orders.
+        Track the status of all your orders.
       </p>
       <div className="mt-6">
         <OrderTable initialOrders={normalized} />
