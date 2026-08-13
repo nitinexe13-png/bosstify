@@ -1,9 +1,10 @@
 "use client";
 
+import { Header } from "@/components/layout/Header";
+import { PageTransition } from "@/components/layout/PageTransition";
+import { Sidebar } from "@/components/layout/Sidebar";
 import type { UserProfile } from "@/types";
 import { useState } from "react";
-import { Header } from "@/components/layout/Header";
-import { Sidebar } from "@/components/layout/Sidebar";
 
 export function DashboardShell({
   user,
@@ -22,8 +23,10 @@ export function DashboardShell({
         onClose={() => setSidebarOpen(false)}
       />
       <Header user={user} onMenuClick={() => setSidebarOpen(true)} />
-      <main className="lg:pl-60">
-        <div className="p-4 md:p-6">{children}</div>
+      <main className="lg:pl-[220px]">
+        <div className="mx-auto max-w-5xl p-4 md:p-6">
+          <PageTransition>{children}</PageTransition>
+        </div>
       </main>
     </div>
   );
