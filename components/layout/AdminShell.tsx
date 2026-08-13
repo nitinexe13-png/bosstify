@@ -1,9 +1,10 @@
 "use client";
 
+import { AdminHeader } from "@/components/layout/AdminHeader";
+import { AdminSidebar } from "@/components/layout/AdminSidebar";
+import { PageTransition } from "@/components/layout/PageTransition";
 import type { UserProfile } from "@/types";
 import { useState } from "react";
-import { AdminSidebar } from "@/components/layout/AdminSidebar";
-import { AdminHeader } from "@/components/layout/AdminHeader";
 
 export function AdminShell({
   user,
@@ -22,8 +23,10 @@ export function AdminShell({
         onClose={() => setSidebarOpen(false)}
       />
       <AdminHeader user={user} onMenuClick={() => setSidebarOpen(true)} />
-      <main className="lg:pl-60">
-        <div className="p-4 md:p-6">{children}</div>
+      <main className="lg:pl-[220px]">
+        <div className="mx-auto max-w-6xl p-4 md:p-6">
+          <PageTransition>{children}</PageTransition>
+        </div>
       </main>
     </div>
   );
