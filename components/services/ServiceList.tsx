@@ -64,7 +64,7 @@ export function ServiceList({ services }: { services: Service[] }) {
             {items.map((service) => (
               <div
                 key={service.id}
-                className="flex flex-col justify-between rounded-card border border-line bg-white p-5"
+                className="flex flex-col justify-between border border-[#f0f0f0] bg-white p-5 transition-[border-color,transform] duration-250 ease-out hover:-translate-y-[2px] hover:border-black"
               >
                 <div>
                   <div className="flex items-start justify-between gap-3">
