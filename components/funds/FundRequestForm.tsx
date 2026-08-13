@@ -62,8 +62,8 @@ export function FundRequestForm() {
         type="number"
         min="0.0001"
         step="any"
-        label="Amount (USD)"
-        placeholder="e.g. 25.00"
+        label="Amount (₹)"
+        placeholder="e.g. 1000"
         value={amount}
         onChange={(e) => setAmount(e.target.value)}
       />
