@@ -6,12 +6,22 @@ export function cn(
   return classes.filter(Boolean).join(" ");
 }
 
-export function formatCurrency(value: number): string {
-  const n = Number(value) || 0;
-  return n.toLocaleString("en-US", {
+export function formatINR(amount: number): string {
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
     minimumFractionDigits: 2,
-    maximumFractionDigits: 4,
-  });
+    maximumFractionDigits: 2,
+  }).format(Number(amount) || 0);
+}
+
+export function round2(value: number): number {
+  return Math.round(Number(value) * 100) / 100;
+}
+
+export function calculateChargeINR(quantity: number, pricePer1000: number): number {
+  const charge = (Number(quantity) / 1000) * Number(pricePer1000);
+  return round2(charge);
 }
 
 export function formatDate(value: string | null | undefined): string {
@@ -54,6 +64,13 @@ export const VALID_ORDER_STATUSES: OrderStatus[] = [
   "cancelled",
   "partial",
   "refunded",
+];
+
+export const ADMIN_ORDER_STATUSES: OrderStatus[] = [
+  "pending",
+  "processing",
+  "completed",
+  "cancelled",
 ];
 
 export function isValidUrl(value: string): boolean {
