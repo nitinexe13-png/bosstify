@@ -5,10 +5,10 @@ import type { HTMLAttributes } from "react";
 export type BadgeVariant = "gray" | "black" | "green" | "red" | "outline";
 
 const variantClasses: Record<BadgeVariant, string> = {
-  gray: "bg-surface text-muted border border-line",
-  black: "bg-black text-white",
-  green: "bg-green-600 text-white",
-  red: "bg-red-600 text-white",
+  gray: "border border-line bg-transparent text-muted",
+  black: "bg-gray-900 text-white",
+  green: "border border-black bg-transparent text-black",
+  red: "border border-gray-300 bg-transparent text-gray-400",
   outline: "bg-white text-black border border-line",
 };
 
