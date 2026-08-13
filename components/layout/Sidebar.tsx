@@ -2,11 +2,12 @@
 
 import { supabaseClient } from "@/lib/supabase/client";
 import { formatINR } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import type { UserProfile } from "@/types";
+import { motion } from "framer-motion";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
-import { cn } from "@/lib/utils";
 
 const navItems = [
   {
@@ -48,10 +49,8 @@ const navItems = [
     label: "Services",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-5 w-5" aria-hidden>
-        <rect x="3" y="3" width="7" height="7" rx="1.5" />
-        <rect x="14" y="3" width="7" height="7" rx="1.5" />
-        <rect x="3" y="14" width="7" height="7" rx="1.5" />
-        <rect x="14" y="14" width="7" height="7" rx="1.5" />
+        <path d="M21 8l-9-5-9 5 9 5 9-5z" strokeLinejoin="round" />
+        <path d="M3 8v8l9 5 9-5V8" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     ),
   },
@@ -118,60 +117,71 @@ export function Sidebar({
 
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex w-60 flex-col bg-black text-white",
+          "fixed inset-y-0 left-0 z-50 flex w-[220px] flex-col border-r border-[#f0f0f0] bg-white",
           "transition-transform duration-200",
           open ? "translate-x-0" : "-translate-x-full",
           "lg:translate-x-0"
         )}
       >
-        <div className="flex h-16 items-center border-b border-white/10 px-5">
-          <Link href="/dashboard" className="text-xl font-bold tracking-tight">
+        <div className="flex h-16 items-center px-5">
+          <Link href="/dashboard" className="text-base font-bold tracking-tight text-black">
             Bosstify
           </Link>
         </div>
 
-        <div className="flex items-center gap-3 border-b border-white/10 px-5 py-4">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-5 w-5 text-white" aria-hidden>
-            <rect x="3" y="6" width="18" height="12" rx="2" />
-            <path d="M3 10h18" strokeLinecap="round" />
-          </svg>
-          <div>
-            <p className="text-xs text-white/60">Balance</p>
-            <p className="text-sm font-semibold">
-              {formatINR(user.balance)}
-            </p>
-          </div>
+        <div className="mx-5 mb-4 flex items-center justify-between rounded-btn border border-[#f0f0f0] px-3 py-2">
+          <span className="text-xs text-muted">Balance</span>
+          <span className="text-[13px] font-semibold text-black">
+            {formatINR(user.balance)}
+          </span>
         </div>
 
-        <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={onClose}
-              className={cn(
-                "flex items-center gap-3 rounded-btn px-3 py-2.5 text-sm font-medium transition-colors",
-                isActive(item.href)
-                  ? "bg-white/10 text-white"
-                  : "text-white/70 hover:bg-white/5 hover:text-white"
-              )}
-            >
-              {item.icon}
-              {item.label}
-            </Link>
-          ))}
+        <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 pb-4">
+          {navItems.map((item) => {
+            const active = isActive(item.href);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={onClose}
+                className={cn(
+                  "relative flex items-center gap-3 rounded-btn px-3 py-2.5 text-sm transition-colors duration-150",
+                  active
+                    ? "font-medium text-black"
+                    : "font-normal text-gray-500 hover:bg-gray-50 hover:text-black"
+                )}
+              >
+                {active && (
+                  <motion.span
+                    layoutId="sidebar-active"
+                    className="absolute inset-y-0 left-0 w-[2px] bg-black"
+                    transition={{ duration: 0.25, ease: "easeOut" }}
+                  />
+                )}
+                {item.icon}
+                {item.label}
+              </Link>
+            );
+          })}
 
           {user.role === "admin" && (
             <Link
               href="/admin"
               onClick={onClose}
               className={cn(
-                "mt-2 flex items-center gap-3 rounded-btn px-3 py-2.5 text-sm font-medium transition-colors",
+                "relative mt-2 flex items-center gap-3 rounded-btn border-t border-[#f0f0f0] px-3 py-2.5 pt-3 text-sm transition-colors duration-150",
                 isActive("/admin")
-                  ? "bg-white/10 text-white"
-                  : "text-white/70 hover:bg-white/5 hover:text-white"
+                  ? "font-medium text-black"
+                  : "font-normal text-gray-500 hover:bg-gray-50 hover:text-black"
               )}
             >
+              {isActive("/admin") && (
+                <motion.span
+                  layoutId="sidebar-active"
+                  className="absolute inset-y-0 left-0 w-[2px] bg-black"
+                  transition={{ duration: 0.25, ease: "easeOut" }}
+                />
+              )}
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-5 w-5" aria-hidden>
                 <path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z" />
                 <path d="M9.5 12l2 2 3.5-3.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -181,11 +191,11 @@ export function Sidebar({
           )}
         </nav>
 
-        <div className="border-t border-white/10 p-3">
+        <div className="border-t border-[#f0f0f0] p-3">
           <button
             onClick={handleLogout}
             disabled={loggingOut}
-            className="flex w-full items-center gap-3 rounded-btn px-3 py-2.5 text-sm font-medium text-white/70 transition-colors hover:bg-white/5 hover:text-white disabled:opacity-50"
+            className="flex w-full items-center gap-3 rounded-btn px-3 py-2.5 text-sm font-normal text-gray-400 transition-colors duration-150 hover:bg-gray-50 hover:text-black disabled:opacity-50"
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-5 w-5" aria-hidden>
               <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" strokeLinecap="round" />
