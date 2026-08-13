@@ -51,7 +51,7 @@ export function OrderTable({ initialOrders }: { initialOrders: Order[] }) {
                   {pageOrders.map((order) => (
                     <tr
                       key={order.id}
-                      className="border-b border-line last:border-0"
+                      className="border-b border-line transition-colors duration-150 last:border-0 hover:bg-gray-50"
                     >
                       <td className="px-5 py-3 font-medium">#{order.id}</td>
                       <td className="max-w-[180px] truncate px-5 py-3">
