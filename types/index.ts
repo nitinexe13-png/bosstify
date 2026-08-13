@@ -32,6 +32,7 @@ export interface Order {
   link: string;
   quantity: number;
   charge: number;
+  charge_inr: number;
   status: OrderStatus;
   start_count: number;
   remains: number;
@@ -50,6 +51,11 @@ export interface Service {
   rate: number;
   min: number;
   max: number;
+  price_inr: number;
+  min_qty: number;
+  max_qty: number;
+  is_active: boolean;
+  description: string | null;
   refill: boolean;
   cancel: boolean;
   updated_at?: string;
