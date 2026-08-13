@@ -1,7 +1,7 @@
 "use client";
 
 import { supabaseClient } from "@/lib/supabase/client";
-import { cn, formatCurrency } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import type { UserProfile } from "@/types";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -40,6 +40,16 @@ const navItems = [
         <circle cx="4" cy="6" r="1.2" fill="currentColor" stroke="none" />
         <circle cx="4" cy="12" r="1.2" fill="currentColor" stroke="none" />
         <circle cx="4" cy="18" r="1.2" fill="currentColor" stroke="none" />
+      </svg>
+    ),
+  },
+  {
+    href: "/admin/services",
+    label: "Services",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-5 w-5" aria-hidden>
+        <path d="M21 8l-9-5-9 5 9 5 9-5z" strokeLinejoin="round" />
+        <path d="M3 8v8l9 5 9-5V8" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     ),
   },
