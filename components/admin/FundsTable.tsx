@@ -3,7 +3,7 @@
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card, CardBody } from "@/components/ui/Card";
-import { formatCurrency, formatDate } from "@/lib/utils";
+import { formatINR, formatDate } from "@/lib/utils";
 import type { AdminFundRequest } from "@/types";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -77,7 +77,7 @@ export function FundsTable({ requests }: { requests: AdminFundRequest[] }) {
                     >
                       <td className="px-5 py-3">{request.user_email ?? request.user_id.slice(0, 8)}</td>
                       <td className="px-5 py-3 font-semibold">
-                        ${formatCurrency(request.amount)}
+                        {formatINR(request.amount)}
                       </td>
                       <td className="px-5 py-3 uppercase">{request.method}</td>
                       <td className="hidden max-w-[160px] truncate px-5 py-3 text-muted md:table-cell">
