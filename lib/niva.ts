@@ -147,6 +147,11 @@ export async function getServices(): Promise<Service[]> {
     rate: toNumber(s.rate),
     min: toNumber(s.min),
     max: toNumber(s.max),
+    price_inr: toNumber(s.rate),
+    min_qty: toNumber(s.min),
+    max_qty: toNumber(s.max),
+    is_active: true,
+    description: null,
     refill: toBool(s.refill),
     cancel: toBool(s.cancel),
   }));
