@@ -173,12 +173,12 @@ export function NewOrderForm({
           <div key={label} className="flex flex-1 flex-col items-center gap-1.5">
             <div
               className={cn(
-                "flex h-8 w-8 items-center justify-center rounded-full border text-xs font-semibold",
+                "flex h-8 w-8 items-center justify-center rounded-full border text-xs font-semibold transition-colors duration-150",
                 index < step
                   ? "border-black bg-black text-white"
                   : index === step
                   ? "border-black bg-white text-black"
-                  : "border-line bg-surface text-muted"
+                  : "border-line bg-transparent text-muted"
               )}
             >
               {index < step ? (
@@ -211,7 +211,7 @@ export function NewOrderForm({
               id="category"
               value={category}
               onChange={(e) => handleCategoryChange(e.target.value)}
-              className="h-10 w-full rounded-btn border border-line bg-white px-3 text-sm text-black focus:border-black focus:outline-none focus:ring-2 focus:ring-black"
+              className="h-10 w-full rounded-btn border border-line bg-white px-3 text-sm text-black transition-colors duration-150 focus:border-black focus:outline-none"
             >
               <option value="">Choose a category…</option>
               {categories.map((c) => (
@@ -237,7 +237,7 @@ export function NewOrderForm({
               id="service"
               value={serviceId ?? ""}
               onChange={(e) => setServiceId(Number(e.target.value))}
-              className="h-10 w-full rounded-btn border border-line bg-white px-3 text-sm text-black focus:border-black focus:outline-none focus:ring-2 focus:ring-black"
+              className="h-10 w-full rounded-btn border border-line bg-white px-3 text-sm text-black transition-colors duration-150 focus:border-black focus:outline-none"
             >
               <option value="">Choose a service…</option>
               {categoryServices.map((s) => (
@@ -291,9 +291,9 @@ export function NewOrderForm({
                   : undefined
               }
             />
-            <div className="flex items-center justify-between rounded-btn border border-line bg-surface px-4 py-3">
-              <span className="text-sm text-muted">Total cost</span>
-              <span className="text-lg font-semibold">
+            <div className="flex items-center justify-between bg-gray-50 px-4 py-4">
+              <span className="text-[13px] text-muted">Total cost</span>
+              <span className="text-lg font-semibold text-black">
                 {formatINR(price)}
               </span>
             </div>
@@ -335,7 +335,13 @@ export function NewOrderForm({
             Continue
           </Button>
         ) : (
-          <Button type="button" onClick={handleSubmit} loading={submitting} disabled={!selectedService}>
+          <Button
+            type="button"
+            onClick={handleSubmit}
+            loading={submitting}
+            disabled={!selectedService}
+            className="h-11 w-full"
+          >
             Place Order
           </Button>
         )}
