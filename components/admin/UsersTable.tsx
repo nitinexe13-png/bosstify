@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card, CardBody } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
-import { formatCurrency, formatDateShort } from "@/lib/utils";
+import { formatINR, formatDateShort } from "@/lib/utils";
 import type { AdminUser } from "@/types";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -135,11 +135,11 @@ export function UsersTable({ users }: { users: AdminUser[] }) {
                         <p className="text-xs text-muted">{user.email ?? "—"}</p>
                       </td>
                       <td className="px-5 py-3 font-semibold">
-                        ${formatCurrency(user.balance)}
+                        {formatINR(user.balance)}
                       </td>
                       <td className="px-5 py-3">{user.orders_count}</td>
                       <td className="hidden px-5 py-3 md:table-cell">
-                        ${formatCurrency(user.total_spent)}
+                        {formatINR(user.total_spent)}
                       </td>
                       <td className="px-5 py-3">
                         <div className="flex items-center gap-2">
@@ -210,13 +210,13 @@ export function UsersTable({ users }: { users: AdminUser[] }) {
                 type="number"
                 min="0.0001"
                 step="any"
-                label="Amount (USD)"
-                placeholder="e.g. 10.00"
+                label="Amount (₹)"
+                placeholder="e.g. 1000"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 hint={
                   balanceMode === "remove"
-                    ? `Current balance: $${formatCurrency(balanceUser.balance)}`
+                    ? `Current balance: ${formatINR(balanceUser.balance)}`
                     : undefined
                 }
               />
