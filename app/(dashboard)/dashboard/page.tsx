@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/Button";
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/Card";
 import { orderStatusBadge, Badge } from "@/components/ui/Badge";
+import { StatCard } from "@/components/ui/StatCard";
 import { createClient } from "@/lib/supabase/server";
 import { formatINR, formatDate, toNumber } from "@/lib/utils";
 import type { Metadata } from "next";
@@ -10,6 +11,13 @@ import { redirect } from "next/navigation";
 export const metadata: Metadata = {
   title: "Dashboard",
 };
+
+function greeting(): string {
+  const hour = new Date().getHours();
+  if (hour < 12) return "Good morning";
+  if (hour < 17) return "Good afternoon";
+  return "Good evening";
+}
 
 export default async function DashboardPage() {
   const supabase = createClient();
@@ -25,7 +33,7 @@ export default async function DashboardPage() {
   const [{ data: profile }, { data: orders }] = await Promise.all([
     supabase
       .from("profiles")
-      .select("balance")
+      .select("balance, username")
       .eq("id", user.id)
       .maybeSingle(),
     supabase
@@ -44,21 +52,17 @@ export default async function DashboardPage() {
     (o) => o.status === "completed"
   ).length;
   const recentOrders = allOrders.slice(0, 5);
-
-  const stats = [
-    { label: "Balance", value: formatINR(balance) },
-    { label: "Total Orders", value: String(totalOrders) },
-    { label: "Pending", value: String(pendingOrders) },
-    { label: "Completed", value: String(completedOrders) },
-  ];
+  const name = profile?.username ?? user.email?.split("@")[0] ?? "there";
 
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
+          <h1 className="text-[22px] font-semibold tracking-tight text-black">
+            {greeting()}, {name}
+          </h1>
           <p className="mt-1 text-sm text-muted">
-            Welcome back! Here&apos;s an overview of your account.
+            Here&apos;s an overview of your account.
           </p>
         </div>
         <Link href="/new-order">
@@ -67,16 +71,26 @@ export default async function DashboardPage() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {stats.map((stat) => (
-          <Card key={stat.label}>
-            <CardBody>
-              <p className="text-sm text-muted">{stat.label}</p>
-              <p className="mt-2 text-2xl font-semibold tracking-tight">
-                {stat.value}
-              </p>
-            </CardBody>
-          </Card>
-        ))}
+        <Card className="transition-colors duration-200 hover:border-gray-300">
+          <CardBody>
+            <StatCard label="Balance" value={balance} currency />
+          </CardBody>
+        </Card>
+        <Card className="transition-colors duration-200 hover:border-gray-300">
+          <CardBody>
+            <StatCard label="Total Orders" value={totalOrders} />
+          </CardBody>
+        </Card>
+        <Card className="transition-colors duration-200 hover:border-gray-300">
+          <CardBody>
+            <StatCard label="Pending" value={pendingOrders} />
+          </CardBody>
+        </Card>
+        <Card className="transition-colors duration-200 hover:border-gray-300">
+          <CardBody>
+            <StatCard label="Completed" value={completedOrders} />
+          </CardBody>
+        </Card>
       </div>
 
       <Card>
@@ -102,7 +116,7 @@ export default async function DashboardPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
                 <thead>
-                  <tr className="border-b border-line text-xs uppercase tracking-wide text-muted">
+                  <tr className="border-b border-line text-xs uppercase tracking-wide text-gray-300">
                     <th className="px-5 py-3 font-medium">Order</th>
                     <th className="px-5 py-3 font-medium">Service</th>
                     <th className="hidden px-5 py-3 font-medium md:table-cell">
@@ -121,7 +135,7 @@ export default async function DashboardPage() {
                   {recentOrders.map((order) => (
                     <tr
                       key={order.id}
-                      className="border-b border-line last:border-0"
+                      className="border-b border-line transition-colors duration-150 last:border-0 hover:bg-gray-50"
                     >
                       <td className="px-5 py-3 font-medium">#{order.id}</td>
                       <td className="max-w-[200px] truncate px-5 py-3">
