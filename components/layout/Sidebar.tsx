@@ -1,7 +1,7 @@
 "use client";
 
 import { supabaseClient } from "@/lib/supabase/client";
-import { formatCurrency } from "@/lib/utils";
+import { formatINR } from "@/lib/utils";
 import type { UserProfile } from "@/types";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -138,7 +138,7 @@ export function Sidebar({
           <div>
             <p className="text-xs text-white/60">Balance</p>
             <p className="text-sm font-semibold">
-              ${formatCurrency(user.balance)}
+              {formatINR(user.balance)}
             </p>
           </div>
         </div>
