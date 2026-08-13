@@ -1,7 +1,7 @@
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/Card";
 import { ProfileForm } from "@/components/profile/ProfileForm";
 import { createClient } from "@/lib/supabase/server";
-import { formatCurrency, formatDate, toNumber } from "@/lib/utils";
+import { formatINR, formatDate, toNumber } from "@/lib/utils";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
@@ -44,7 +44,7 @@ export default async function ProfilePage() {
           <CardBody>
             <p className="text-sm text-muted">Balance</p>
             <p className="mt-1 text-xl font-semibold">
-              ${formatCurrency(toNumber(profile.balance))}
+              {formatINR(toNumber(profile.balance))}
             </p>
           </CardBody>
         </Card>
