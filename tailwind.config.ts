@@ -10,16 +10,33 @@ const config: Config = {
     extend: {
       colors: {
         primary: "#000000",
-        surface: "#F5F5F5",
-        line: "#E0E0E0",
-        muted: "#6B6B6B",
+        surface: "#fafafa",
+        line: "#e5e5e5",
+        muted: "#737373",
+        black: "#000000",
+        white: "#ffffff",
+        gray: {
+          50: "#fafafa",
+          100: "#f5f5f5",
+          200: "#e5e5e5",
+          300: "#d4d4d4",
+          400: "#a3a3a3",
+          500: "#737373",
+          600: "#525252",
+          700: "#404040",
+          800: "#262626",
+          900: "#171717",
+        },
       },
       fontFamily: {
         sans: ["var(--font-inter)", "Inter", "system-ui", "sans-serif"],
       },
       borderRadius: {
-        card: "8px",
-        btn: "6px",
+        card: "0px",
+        btn: "0px",
+      },
+      transitionTimingFunction: {
+        "out-expo": "cubic-bezier(0.25, 0.1, 0.25, 1)",
       },
     },
   },
