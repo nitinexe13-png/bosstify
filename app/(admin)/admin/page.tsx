@@ -1,7 +1,7 @@
 import { Card, CardBody } from "@/components/ui/Card";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { buttonClasses } from "@/components/ui/Button";
-import { formatCurrency, toNumber } from "@/lib/utils";
+import { formatINR, toNumber } from "@/lib/utils";
 import type { Metadata } from "next";
 import Link from "next/link";
 
@@ -31,7 +31,7 @@ export default async function AdminDashboardPage() {
   const stats = [
     { label: "Total Users", value: String(userCount ?? 0) },
     { label: "Total Orders", value: String(orderCount ?? 0) },
-    { label: "Total Revenue", value: `$${formatCurrency(totalRevenue)}` },
+    { label: "Total Revenue", value: formatINR(totalRevenue) },
     { label: "Today's Orders", value: String(todayOrders?.length ?? 0) },
   ];
 
