@@ -2,7 +2,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/Card";
 import { FundRequestForm } from "@/components/funds/FundRequestForm";
 import { createClient } from "@/lib/supabase/server";
-import { formatCurrency, formatDate, toNumber } from "@/lib/utils";
+import { formatINR, formatDate, toNumber } from "@/lib/utils";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
@@ -64,7 +64,7 @@ export default async function AddFundsPage() {
           </CardHeader>
           <CardBody>
             <p className="text-3xl font-semibold tracking-tight">
-              ${formatCurrency(balance)}
+              {formatINR(balance)}
             </p>
             {requests && requests[0] && (
               <p className="mt-3 flex items-center gap-2 text-sm text-muted">
@@ -143,8 +143,8 @@ export default async function AddFundsPage() {
                           tx.type === "credit" ? "text-green-600" : "text-black"
                         }`}
                       >
-                        {tx.type === "credit" ? "+" : "-"}$
-                        {formatCurrency(toNumber(tx.amount))}
+                        {tx.type === "credit" ? "+" : "-"}
+                        {formatINR(toNumber(tx.amount))}
                       </td>
                       <td className="px-5 py-3">{tx.description}</td>
                       <td className="hidden px-5 py-3 text-muted md:table-cell">
