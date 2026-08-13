@@ -5,13 +5,14 @@ export type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
 export type ButtonSize = "sm" | "md" | "lg";
 
 const baseClasses =
-  "inline-flex items-center justify-center gap-2 rounded-btn font-medium transition-opacity duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
+  "inline-flex items-center justify-center gap-2 rounded-btn font-medium transition-all duration-150 ease-out active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
 
 const variantClasses: Record<ButtonVariant, string> = {
-  primary: "bg-black text-white hover:opacity-85",
-  secondary: "bg-white text-black border border-line hover:bg-surface",
-  ghost: "bg-transparent text-black hover:bg-surface",
-  danger: "bg-red-600 text-white hover:opacity-85",
+  primary: "bg-black text-white hover:bg-gray-800",
+  secondary:
+    "bg-transparent text-black border border-line hover:bg-gray-50 hover:border-gray-300",
+  ghost: "bg-transparent text-black hover:bg-gray-50",
+  danger: "bg-black text-white hover:bg-gray-800",
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
