@@ -3,8 +3,8 @@
 import { Badge, orderStatusBadge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card, CardBody } from "@/components/ui/Card";
-import { formatCurrency, formatDate, VALID_ORDER_STATUSES } from "@/lib/utils";
-import type { AdminOrder, OrderStatus } from "@/types";
+import { ADMIN_ORDER_STATUSES, formatINR, formatDate } from "@/lib/utils";
+import type { AdminOrder } from "@/types";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 
@@ -48,10 +48,10 @@ export function AdminOrdersTable({ orders }: { orders: AdminOrder[] }) {
   async function handleStatusChange(order: AdminOrder, status: string) {
     setUpdatingId(order.id);
     try {
-      const response = await fetch("/api/admin/orders", {
-        method: "POST",
+      const response = await fetch(`/api/admin/orders/${order.id}/status`, {
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ orderId: order.id, status }),
+        body: JSON.stringify({ status }),
       });
       const data = await response.json();
       if (!response.ok) {
@@ -82,7 +82,7 @@ export function AdminOrdersTable({ orders }: { orders: AdminOrder[] }) {
             className="h-9 rounded-btn border border-line bg-white px-2 text-sm text-black focus:border-black focus:outline-none focus:ring-2 focus:ring-black"
           >
             <option value="all">All statuses</option>
-            {VALID_ORDER_STATUSES.map((status) => (
+            {ADMIN_ORDER_STATUSES.map((status) => (
               <option key={status} value={status}>
                 {status}
               </option>
@@ -145,7 +145,7 @@ export function AdminOrdersTable({ orders }: { orders: AdminOrder[] }) {
                         <p className="font-medium">#{order.id}</p>
                         {order.niva_order_id && (
                           <p className="text-xs text-muted">
-                            Niva: {order.niva_order_id}
+                            Ref: {order.niva_order_id}
                           </p>
                         )}
                       </td>
@@ -160,7 +160,7 @@ export function AdminOrdersTable({ orders }: { orders: AdminOrder[] }) {
                       </td>
                       <td className="px-5 py-3">{order.quantity}</td>
                       <td className="px-5 py-3 font-semibold">
-                        ${formatCurrency(order.charge)}
+                        {formatINR(order.charge_inr)}
                       </td>
                       <td className="px-5 py-3">
                         <div className="flex items-center gap-2">
@@ -175,7 +175,7 @@ export function AdminOrdersTable({ orders }: { orders: AdminOrder[] }) {
                             }
                             className="h-8 rounded-btn border border-line bg-white px-2 text-xs text-black focus:border-black focus:outline-none focus:ring-2 focus:ring-black"
                           >
-                            {VALID_ORDER_STATUSES.map((status) => (
+                            {ADMIN_ORDER_STATUSES.map((status) => (
                               <option key={status} value={status}>
                                 {status}
                               </option>
@@ -221,5 +221,3 @@ export function AdminOrdersTable({ orders }: { orders: AdminOrder[] }) {
     </div>
   );
 }
-
-export type { OrderStatus };
